@@ -1,58 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>RPS Brython</title>
-  <!-- Load Brython -->
-  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython_stdlib.js"></script>
-  <style>
-    body { font-family: Arial; text-align:center; margin-top:40px; }
-    button{ margin:8px; padding:10px 16px; font-size:16px; }
-    #result, #score { margin-top:20px; font-weight:bold; white-space:pre-line; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Paper Scissors Game</title>
+<style>
+    /* Full-screen gradient animated background */
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
+        background-size: 800% 800%;
+        animation: gradientBG 15s ease infinite;
+        color: white;
+    }
+
+    @keyframes gradientBG {
+        0% {background-position:0% 50%;}
+        50% {background-position:100% 50%;}
+        100% {background-position:0% 50%;}
+    }
+
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .choices {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .choice-btn {
+        padding: 1.5rem 2rem;
+        font-size: 1.5rem;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .choice-btn:hover {
+        transform: scale(1.2);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    }
+
+    .result {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    }
+
+    .scoreboard {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+
+    .reset-btn {
+        margin-top: 1rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background-color: #ffffff80;
+        color: black;
+        transition: background-color 0.3s;
+    }
+
+    .reset-btn:hover {
+        background-color: #ffffff;
+    }
+
+</style>
 </head>
-<body onload="brython()">
+<body>
 
-  <h1>Rock Paper Scissors</h1>
-  <button id="rock">🪨 Rock</button>
-  <button id="paper">📄 Paper</button>
-  <button id="scissors">✂️ Scissors</button>
+<h1>Rock Paper Scissors</h1>
 
-  <div id="result"></div>
-  <div id="score">You: 0  Computer: 0  Draws: 0</div>
+<div class="choices">
+    <button class="choice-btn" data-choice="r">✊ Rock</button>
+    <button class="choice-btn" data-choice="p">✋ Paper</button>
+    <button class="choice-btn" data-choice="s">✌️ Scissors</button>
+</div>
 
-  <script type="text/python">
-from browser import document
-import random
+<div class="result"></div>
+<div class="scoreboard">Your Score: 0 | Computer Score: 0</div>
+<button class="reset-btn">Reset Game</button>
 
-choices = {"r":"Rock","p":"Paper","s":"Scissors"}
-score = {"you":0,"comp":0,"draws":0}
+<script>
+const choices = { r: "Rock", p: "Paper", s: "Scissors" };
+let userScore = 0;
+let computerScore = 0;
 
-def play(user_choice):
-    comp = random.choice(["r","p","s"])
-    result = f"You chose {choices[user_choice]}.\nComputer chose {choices[comp]}.\n"
+const resultDiv = document.querySelector('.result');
+const scoreDiv = document.querySelector('.scoreboard');
 
-    if user_choice == comp:
-        result += "😐 It's a draw!"
-        score["draws"] += 1
-    elif (user_choice=="r" and comp=="s") or \
-         (user_choice=="p" and comp=="r") or \
-         (user_choice=="s" and comp=="p"):
-        result += "🎉 You win!"
-        score["you"] += 1
-    else:
-        result += "💻 Computer wins!"
-        score["comp"] += 1
+document.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const userChoice = btn.dataset.choice;
+        const compChoice = Object.keys(choices)[Math.floor(Math.random() * 3)];
 
-    document["result"].text = result
-    document["score"].text = f"You: {score['you']}  Computer: {score['comp']}  Draws: {score['draws']}"
+        if (userChoice === compChoice) {
+            resultDiv.textContent = `Draw! 😐 You both chose ${choices[userChoice]}`;
+        } else if (
+            (userChoice === 'r' && compChoice === 's') ||
+            (userChoice === 'p' && compChoice === 'r') ||
+            (userChoice === 's' && compChoice === 'p')
+        ) {
+            resultDiv.textContent = `You Win! 💦 ${choices[userChoice]} beats ${choices[compChoice]}`;
+            userScore++;
+        } else {
+            resultDiv.textContent = `You Lose! 🍌 ${choices[compChoice]} beats ${choices[userChoice]}`;
+            computerScore++;
+        }
 
-# Bind buttons
-document["rock"].bind("click", lambda ev: play("r"))
-document["paper"].bind("click", lambda ev: play("p"))
-document["scissors"].bind("click", lambda ev: play("s"))
-  </script>
+        scoreDiv.textContent = `Your Score: ${userScore} | Computer Score: ${computerScore}`;
+    });
+});
+
+document.querySelector('.reset-btn').addEventListener('click', () => {
+    userScore = 0;
+    computerScore = 0;
+    resultDiv.textContent = '';
+    scoreDiv.textContent = `Your Score: 0 | Computer Score: 0`;
+});
+</script>
 
 </body>
 </html>
