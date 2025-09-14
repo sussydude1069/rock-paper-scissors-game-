@@ -8,16 +8,18 @@
     /* Full-screen gradient animated background */
     body {
         margin: 0;
+        padding: 1rem;
         font-family: 'Arial', sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
         background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
         background-size: 800% 800%;
         animation: gradientBG 15s ease infinite;
         color: white;
+        box-sizing: border-box;
     }
 
     @keyframes gradientBG {
@@ -27,65 +29,215 @@
     }
 
     h1 {
-        font-size: 3rem;
+        font-size: clamp(2rem, 6vw, 3rem);
         margin-bottom: 1rem;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        text-align: center;
     }
 
     .choices {
         display: flex;
-        gap: 2rem;
+        flex-direction: column;
+        gap: 1rem;
         margin-bottom: 2rem;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Mobile-first responsive design */
+    @media (min-width: 480px) {
+        .choices {
+            flex-direction: row;
+            gap: 1.5rem;
+        }
     }
 
     .choice-btn {
-        padding: 1.5rem 2rem;
-        font-size: 1.5rem;
+        padding: 1.2rem 1.5rem;
+        font-size: clamp(1.1rem, 4vw, 1.3rem);
         border: none;
         border-radius: 20px;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: all 0.3s ease;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        background: rgba(255,255,255,0.9);
+        color: #333;
+        font-weight: bold;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .choice-btn:hover {
-        transform: scale(1.2);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    .choice-btn:hover, .choice-btn:active {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        background: rgba(255,255,255,1);
+    }
+
+    .choice-btn:active {
+        transform: scale(0.95);
     }
 
     .result {
-        font-size: 2rem;
+        font-size: clamp(1.2rem, 5vw, 1.8rem);
         margin-bottom: 1rem;
         text-align: center;
         text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1rem;
     }
 
     .scoreboard {
-        font-size: 1.2rem;
+        font-size: clamp(1rem, 3vw, 1.2rem);
         margin-top: 1rem;
+        text-align: center;
+        background: rgba(255,255,255,0.2);
+        padding: 1rem;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        min-width: 250px;
     }
 
     .reset-btn {
         margin-top: 1rem;
         padding: 0.8rem 1.5rem;
-        font-size: 1rem;
+        font-size: clamp(0.9rem, 3vw, 1rem);
         border: none;
         border-radius: 10px;
         cursor: pointer;
-        background-color: #ffffff80;
-        color: black;
-        transition: background-color 0.3s;
+        background-color: rgba(255,255,255,0.8);
+        color: #333;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        min-height: 44px;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .reset-btn:hover {
+    .reset-btn:hover, .reset-btn:active {
         background-color: #ffffff;
+        transform: translateY(-2px);
     }
 
+    .reset-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Win Animation */
+    @keyframes celebrate {
+        0% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.2) rotate(10deg); }
+        50% { transform: scale(1.1) rotate(-10deg); }
+        75% { transform: scale(1.2) rotate(10deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes confetti {
+        0% { 
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% { 
+            transform: translateY(-100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes winGlow {
+        0%, 100% { 
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+        }
+        50% { 
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+        }
+    }
+
+    .win-animation {
+        animation: celebrate 0.6s ease-in-out, winGlow 2s ease-in-out;
+    }
+
+    /* Lose Animation */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes fadeRed {
+        0%, 100% { 
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        50% { 
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            background: rgba(255, 200, 200, 0.9);
+        }
+    }
+
+    .lose-animation {
+        animation: shake 0.5s ease-in-out, fadeRed 1.5s ease-in-out;
+    }
+
+    /* Confetti particles */
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #FFD700;
+        pointer-events: none;
+        animation: confetti 3s linear forwards;
+    }
+
+    .confetti:nth-child(odd) {
+        background: #FF6B6B;
+        border-radius: 50%;
+    }
+
+    .confetti:nth-child(3n) {
+        background: #4ECDC4;
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        body {
+            padding: 0.5rem;
+        }
+        
+        .choice-btn {
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-height: 600px) {
+        h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .choices {
+            margin-bottom: 1rem;
+        }
+        
+        .result {
+            margin-bottom: 0.5rem;
+            min-height: 40px;
+        }
+    }
 </style>
 </head>
 <body>
 
-<h1>Rock Paper Scissors</h1>
+<h1>🎮 Rock Paper Scissors</h1>
 
 <div class="choices">
     <button class="choice-btn" data-choice="r">✊ Rock</button>
@@ -93,47 +245,136 @@
     <button class="choice-btn" data-choice="s">✌️ Scissors</button>
 </div>
 
-<div class="result"></div>
+<div class="result">Choose your move!</div>
 <div class="scoreboard">Your Score: 0 | Computer Score: 0</div>
-<button class="reset-btn">Reset Game</button>
+<button class="reset-btn">🔄 Reset Game</button>
 
 <script>
 const choices = { r: "Rock", p: "Paper", s: "Scissors" };
+const emojis = { r: "✊", p: "✋", s: "✌️" };
 let userScore = 0;
 let computerScore = 0;
 
 const resultDiv = document.querySelector('.result');
 const scoreDiv = document.querySelector('.scoreboard');
+const choiceBtns = document.querySelectorAll('.choice-btn');
 
-document.querySelectorAll('.choice-btn').forEach(btn => {
+function createConfetti() {
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+            confetti.remove();
+        }, 4000);
+    }
+}
+
+function animateResult(isWin, selectedBtn) {
+    // Remove any existing animations
+    choiceBtns.forEach(btn => {
+        btn.classList.remove('win-animation', 'lose-animation');
+    });
+    
+    // Add appropriate animation
+    if (isWin) {
+        selectedBtn.classList.add('win-animation');
+        createConfetti();
+        // Add screen flash effect
+        document.body.style.animation = 'none';
+        setTimeout(() => {
+            document.body.style.animation = 'gradientBG 15s ease infinite';
+        }, 100);
+    } else {
+        selectedBtn.classList.add('lose-animation');
+    }
+    
+    // Remove animation classes after animation completes
+    setTimeout(() => {
+        selectedBtn.classList.remove('win-animation', 'lose-animation');
+    }, 2000);
+}
+
+choiceBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const userChoice = btn.dataset.choice;
         const compChoice = Object.keys(choices)[Math.floor(Math.random() * 3)];
+        
+        // Add click feedback
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            btn.style.transform = '';
+        }, 150);
+
+        let isWin = false;
+        let isDraw = false;
 
         if (userChoice === compChoice) {
-            resultDiv.textContent = `Draw! 😐 You both chose ${choices[userChoice]}`;
+            resultDiv.innerHTML = `
+                <div>🤝 It's a Draw!</div>
+                <div style="font-size: 0.8em; margin-top: 0.5rem;">
+                    You: ${emojis[userChoice]} ${choices[userChoice]} | 
+                    Computer: ${emojis[compChoice]} ${choices[compChoice]}
+                </div>
+            `;
+            isDraw = true;
         } else if (
             (userChoice === 'r' && compChoice === 's') ||
             (userChoice === 'p' && compChoice === 'r') ||
             (userChoice === 's' && compChoice === 'p')
         ) {
-            resultDiv.textContent = `You Win! 💦 ${choices[userChoice]} beats ${choices[compChoice]}`;
+            resultDiv.innerHTML = `
+                <div>🎉 You Win! 🎉</div>
+                <div style="font-size: 0.8em; margin-top: 0.5rem;">
+                    ${emojis[userChoice]} ${choices[userChoice]} beats ${emojis[compChoice]} ${choices[compChoice]}
+                </div>
+            `;
             userScore++;
+            isWin = true;
         } else {
-            resultDiv.textContent = `You Lose! 🍌 ${choices[compChoice]} beats ${choices[userChoice]}`;
+            resultDiv.innerHTML = `
+                <div>😔 You Lose! 😔</div>
+                <div style="font-size: 0.8em; margin-top: 0.5rem;">
+                    ${emojis[compChoice]} ${choices[compChoice]} beats ${emojis[userChoice]} ${choices[userChoice]}
+                </div>
+            `;
             computerScore++;
         }
 
         scoreDiv.textContent = `Your Score: ${userScore} | Computer Score: ${computerScore}`;
+        
+        // Animate result if not a draw
+        if (!isDraw) {
+            animateResult(isWin, btn);
+        }
     });
 });
 
 document.querySelector('.reset-btn').addEventListener('click', () => {
     userScore = 0;
     computerScore = 0;
-    resultDiv.textContent = '';
+    resultDiv.textContent = 'Choose your move!';
     scoreDiv.textContent = `Your Score: 0 | Computer Score: 0`;
+    
+    // Remove any lingering animations
+    choiceBtns.forEach(btn => {
+        btn.classList.remove('win-animation', 'lose-animation');
+    });
+    
+    // Add a little feedback to reset button
+    const resetBtn = document.querySelector('.reset-btn');
+    resetBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        resetBtn.style.transform = '';
+    }, 150);
 });
+
+// Add touch feedback for mobile
+document.addEventListener('touchstart', function() {}, {passive: true});
 </script>
 
 </body>
